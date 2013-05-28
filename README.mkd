@@ -1,0 +1,23 @@
+# Scala Gearman
+
+## Usage
+
+Initialize a new instance of a Service (either a worker or server)
+
+```scala
+val client = system.actorOf(Props(new Service("example.com", 4730, "client")))
+```
+
+Send messages to the server
+
+```scala
+client ! Packet.build(Magic.REQ, Command.CAN_DO, List("reverse"))
+```
+
+## TODO
+
+* Turn the various commands into objects with extractors and apply methods of their own to make construction of packets easier.
+
+* Differentiate client / worker services
+
+* Write an example server
