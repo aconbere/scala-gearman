@@ -6,11 +6,21 @@ import akka.util.ByteString
 import com.typesafe.scalalogging.log4j.Logging
 import java.net.InetSocketAddress
 
-class Service(val serverName:String, val port:Int, val id:String) extends Actor with Logging {
+trait Responseu
+
+trait ServiceLike extends Actor with Logging {
+  val serverName:String
+  val port:Int
+
+  type MessageHandler = PartialFunction[Packet, Option[Response]]
+
+  def handleMessage:(p:Packet)
+
+
   val state = IO.IterateeRef.Map.async[IO.Handle]()(context.dispatcher)
-  val address = new InetSocketAddress(serverName, port)
 
   var handle:Option[IO.SocketHandle] = None
+  val address = new InetSocketAddress(serverName, port)
 
   override def preStart {
     p("Connecting to: " + address)
