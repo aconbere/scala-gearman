@@ -18,19 +18,17 @@ object Main {
     val client = system.actorOf(Props(new Service("example.com", 4730, "client")))
     val worker = system.actorOf(Props(new Service("example.com", 4730, "worker")))
 
-
-
     Thread.sleep(2000)
-    worker ! Packet.build(Magic.REQ, Command.CAN_DO, List("reverse"))
+    worker ! Messages.Worker.CAN_DO("reverse")
     Thread.sleep(2000)
-    worker ! Packet.build(Magic.REQ, Command.GRAB_JOB)
+    worker ! Messages.Worker.GRAB_JOB()
     Thread.sleep(2000)
-    worker ! Packet.build(Magic.REQ, Command.PRE_SLEEP)
+    worker ! Messages.Worker.PRE_SLEEP()
     Thread.sleep(2000)
     
-    client ! Packet.build(Magic.REQ, Command.SUBMIT_JOB, List("reverse", "", "test"))
+    client ! Messages.Client.SUBMIT_JOB("reverse", "", "test")
     Thread.sleep(2000)
-    worker ! Packet.build(Magic.REQ, Command.GRAB_JOB)
+    worker ! Messages.Worker.GRAB_JOB()
     Thread.sleep(2000)
     println("waiting")
   }

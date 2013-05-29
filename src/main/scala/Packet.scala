@@ -112,4 +112,7 @@ object Packet {
       .result
     new Packet(new PacketHeader(magic, command, bodyBytes.length), bodyBytes)
   }
+
+  def unapply(packet:Packet) =
+    Some(packet.header.magic, packet.header.command, packet.arguments)
 }
