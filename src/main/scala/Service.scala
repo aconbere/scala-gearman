@@ -6,16 +6,11 @@ import akka.util.ByteString
 import com.typesafe.scalalogging.log4j.Logging
 import java.net.InetSocketAddress
 
-trait Responseu
-
 trait ServiceLike extends Actor with Logging {
   val serverName:String
   val port:Int
-
-  type MessageHandler = PartialFunction[Packet, Option[Response]]
-
-  def handleMessage:(p:Packet)
-
+  val id:String
+  val handlePacket:PartialFunction[Packet,Option[Response]]
 
   val state = IO.IterateeRef.Map.async[IO.Handle]()(context.dispatcher)
 
@@ -25,11 +20,6 @@ trait ServiceLike extends Actor with Logging {
   override def preStart {
     p("Connecting to: " + address)
     IOManager(context.system).connect(address)
-  }
-
-  def handlePacket(packet:Packet) = {
-    p("Recieved: " + packet.toString)
-    Some(packet)
   }
 
   def p(msg:String):Unit = println(id + ": " + msg)
@@ -49,7 +39,10 @@ trait ServiceLike extends Actor with Logging {
             bodyBytes <- IO.take(size)
           } yield {
             for (header <- PacketHeader.parse(headerBytes)) {
-              handlePacket(new Packet(header, bodyBytes))
+              handlePacket(new Packet(header, bodyBytes)) map {
+                r:Response =>
+                  socket.write(r.toByteString)
+              }
             }
           }
         }
@@ -63,11 +56,18 @@ trait ServiceLike extends Actor with Logging {
       state -= socket
       handle = None
 
-    case packet:Packet =>
+    case response:Response =>
       handle foreach { socket => 
-        p("Sending: " + packet.toByteString)
-        socket.write(packet.toByteString)
+        p("Sending: " + response.toString)
+        socket.write(response.toByteString)
       }
   }
 }
 
+class Service(val serverName:String, val port:Int, override val id:String) extends ServiceLike {
+  val handlePacket:PartialFunction[Packet,Option[Response]] = {
+    case packet:Packet => 
+      p("Recieved: " + packet.toString)
+      None
+  }
+}

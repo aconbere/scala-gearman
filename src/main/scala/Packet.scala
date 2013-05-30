@@ -83,7 +83,7 @@ object ByteStringHelper {
 class Packet(
   val header: PacketHeader,
   val body: ByteString
-) {
+) extends Response {
   def this(header: PacketHeader) = this(header, ByteString(""))
 
   def toByteString =
