@@ -8,7 +8,7 @@ organization := "org.conbere"
 
 licenses := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php"))
 
-homepage := Some(url("http://github.com/aconbere/scala-irc"))
+homepage := Some(url("http://github.com/aconbere/scala-gearman"))
 
 scalaVersion := "2.10.0"
 
