@@ -11,11 +11,13 @@ trait ServiceLike extends Actor with Logging {
   val port:Int
   val id:String
   val handlePacket:PartialFunction[Packet,Option[Response]]
+  def connected:Option[Response] = None
 
   val state = IO.IterateeRef.Map.async[IO.Handle]()(context.dispatcher)
 
   var handle:Option[IO.SocketHandle] = None
   val address = new InetSocketAddress(serverName, port)
+
 
   override def preStart {
     p("Connecting to: " + address)
@@ -30,6 +32,11 @@ trait ServiceLike extends Actor with Logging {
     case IO.Connected(socket, address) =>
       p("Connected")
       handle = Some(socket)
+
+      connected map {
+        r:Response =>
+          socket.write(r.toByteString)
+      }
 
       state(socket).flatMap { _ =>
         IO.repeat {

@@ -10,7 +10,7 @@ licenses := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-licen
 
 homepage := Some(url("http://github.com/aconbere/scala-gearman"))
 
-scalaVersion := "2.10.0"
+scalaVersion := "2.10.1"
 
 sbtVersion := "0.12.3"
 

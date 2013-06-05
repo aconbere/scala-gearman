@@ -13,12 +13,12 @@ object Messages {
     val PRE_SLEEP = new Arg0Matcher(Magic.REQ, Command.PRE_SLEEP)
     val NO_JOB = new Arg0Matcher(Magic.REQ, Command.NO_JOB)
 
-    val WORK_COMPLETE = new Arg3Matcher(Magic.REQ, Command.WORK_COMPLETE)
-    val WORK_STATUS = new Arg3Matcher(Magic.REQ, Command.WORK_COMPLETE)
-    val WORK_FAIL = new Arg3Matcher(Magic.REQ, Command.WORK_FAIL)
+    val WORK_STATUS    = new Arg3Matcher(Magic.REQ, Command.WORK_STATUS)
+    val WORK_COMPLETE  = new Arg2Matcher(Magic.REQ, Command.WORK_COMPLETE)
     val WORK_EXCEPTION = new Arg2Matcher(Magic.REQ, Command.WORK_EXCEPTION)
-    val WORK_DATA = new Arg2Matcher(Magic.REQ, Command.WORK_DATA)
-    val WORK_WARNING = new Arg2Matcher(Magic.REQ, Command.WORK_WARNING)
+    val WORK_DATA      = new Arg2Matcher(Magic.REQ, Command.WORK_DATA)
+    val WORK_WARNING   = new Arg2Matcher(Magic.REQ, Command.WORK_WARNING)
+    val WORK_FAIL      = new Arg1Matcher(Magic.REQ, Command.WORK_FAIL)
 
     val ECHO_REQ = new Arg1Matcher(Magic.REQ, Command.ECHO_REQ)
     val ECHO_RES = new Arg1Matcher(Magic.RES, Command.ECHO_RES)
