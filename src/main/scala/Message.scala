@@ -11,7 +11,7 @@ object Messages {
 
     val NOOP = new Arg0Matcher(Magic.RES, Command.NOOP)
     val PRE_SLEEP = new Arg0Matcher(Magic.REQ, Command.PRE_SLEEP)
-    val NO_JOB = new Arg0Matcher(Magic.REQ, Command.NO_JOB)
+    val NO_JOB = new Arg0Matcher(Magic.RES, Command.NO_JOB)
 
     val WORK_STATUS    = new Arg3Matcher(Magic.REQ, Command.WORK_STATUS)
     val WORK_COMPLETE  = new Arg2Matcher(Magic.REQ, Command.WORK_COMPLETE)

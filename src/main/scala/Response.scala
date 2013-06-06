@@ -16,4 +16,6 @@ extends Response {
   def toByteString = responseList.foldLeft(new ByteStringBuilder) {
     (acc, m) => acc ++= m.toByteString
   }.result
+
+  override def toString = responseList.map( _.toString).mkString("|")
 }

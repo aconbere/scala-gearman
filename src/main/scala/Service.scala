@@ -11,6 +11,7 @@ trait ServiceLike extends Actor with Logging {
   val port:Int
   val id:String
   val handlePacket:PartialFunction[Packet,Option[Response]]
+
   def connected:Option[Response] = None
 
   val state = IO.IterateeRef.Map.async[IO.Handle]()(context.dispatcher)
@@ -28,14 +29,21 @@ trait ServiceLike extends Actor with Logging {
   def p(msg:ByteString):Unit = p(msg.toString)
   def p(msg:Packet):Unit = p(msg.toString)
 
-  def receive = {
+  def writeToSocket(socket:IO.SocketHandle, response:Response) = {
+    p("Sending:")
+    p("\t" + response.toString)
+    p("\t" + response.toByteString)
+    socket.write(response.toByteString)
+  }
+
+  def attachSocket:Actor.Receive = {
     case IO.Connected(socket, address) =>
       p("Connected")
       handle = Some(socket)
 
       connected map {
         r:Response =>
-          socket.write(r.toByteString)
+          writeToSocket(socket, r)
       }
 
       state(socket).flatMap { _ =>
@@ -48,7 +56,7 @@ trait ServiceLike extends Actor with Logging {
             for (header <- PacketHeader.parse(headerBytes)) {
               handlePacket(new Packet(header, bodyBytes)) map {
                 r:Response =>
-                  socket.write(r.toByteString)
+                  writeToSocket(socket, r)
               }
             }
           }
@@ -65,13 +73,13 @@ trait ServiceLike extends Actor with Logging {
 
     case response:Response =>
       handle foreach { socket => 
-        p("Sending: " + response.toString)
-        socket.write(response.toByteString)
+        writeToSocket(socket, response)
       }
   }
 }
 
 class Service(val serverName:String, val port:Int, override val id:String) extends ServiceLike {
+  def receive = attachSocket
   val handlePacket:PartialFunction[Packet,Option[Response]] = {
     case packet:Packet => 
       p("Recieved: " + packet.toString)

@@ -1,13 +1,12 @@
 package org.conbere.gearman
 
 class Arg0Matcher(magic:Magic, command:Command) {
-  def apply() =
-    Packet.build(magic, command)
+  def apply() = Packet.build(magic, command)
 
   def unapply(packet:Packet) = {
     packet match {
-      case Packet(`magic`, `command`, List()) =>
-        Some
+      case Packet(`magic`, `command`, _) =>
+        Some()
       case _ =>
         None
     }
